@@ -50,3 +50,25 @@ create_sample <- function(n, min = 1, max = 20000){
   }
   samp
 }
+
+#--------------------------------------------------
+# Goodman simultaneous intervals 
+#--------------------------------------------------
+goodman <- function(x, a = 0.05){
+  nx <- table(x)
+  n <- sum(nx)
+  k <- length(nx)
+  B <- qchisq((1-a)/k, 1) # Xa,1 bcs a is right tail!
+  fx <- as.vector(nx)
+  
+  dev <- sqrt(B*(B + 4*fx*(n-fx)/n))
+  ul <- (B + 2*fx + dev)/(2*(n + B))
+  ll <- (B + 2*fx - dev)/(2*(n + B))
+  
+  data.frame(
+    digit = names(nx),
+    prop = as.vector(prop.table(nx)),
+    ll = ll,
+    ul = ul
+  )
+}
