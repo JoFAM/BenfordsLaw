@@ -1,15 +1,19 @@
 ---
 title: "Applying Benford's law to COVID data the right way"
-output: 
-  html_document:
-    code_folding: hide
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE,
+                      fig.align='center',
+                      out.width='100%',
+                      fig.width=8,
+                      fig.height=4,
+                      warning = FALSE,
+                      message = FALSE)
 library(ggplot2)
 library(dplyr)
 library(patchwork)
+library(flextable)
 ```
 
 --------------------
@@ -22,17 +26,142 @@ $$
 P(D) = \text{log}_{10}\left( \frac{D + 1}{D}\right)
 $$
 
-His discovery was forgotten about until Frank Benford noticed the same in 1938, and checked this theoretical distribution against a wide variety of datasets. Many of those datasets seemed to follow this law rather well, although some deviated significantly. The plot below shows 
+In 1938, Frank Benford noticed the same thing and checked this theoretical distribution against a wide variety of datasets. Many of those datasets seemed to follow this law rather well, although some deviated significantly. 
+
+```{r}
+# Read in some functions we need
+#source("https://raw.githubusercontent.com/JoFAM/BenfordsLaw/main/benfordFunctions.R")
+source("../benfordFunctions.R")
+# Read in the data downloaded from worldbank
+d <- read.csv("../data/exportData.csv",skip = 4)
+# just get the numbers
+z <- as.matrix(d[-(1:4)])
+z <- z[!is.na(z)]
+```
+
+As an example, I've downloaded the export data of all countries for the period 1960 to 2020 from the Worldbank website. This dataset contains in total `r length(z)` numbers. In the graphs below I show the expected distribution of the first digit according to Benford's law (left), and the observed distribution in this dataset (right). Both graphs look almost identical.
+
+```{r}
+df1 <- data.frame(prop = dBenf(1:9),
+                  digit = as.character(1:9))
+p1 <- ggplot(df1, aes(x = digit)) +
+  geom_col(aes(y=prop)) +
+  stat_function(aes(group = 1),
+                fun = ~ log10(1 + 1/.)) +
+  labs(y = "proportion",
+       title = "Expected distribution of digits\naccording to Benford's law")
+
+df2 <- fdigit(z) %>%
+  table() %>%
+  prop.table() %>%
+  as.data.frame()
+names(df2) <- c("digit","prop")
+p2 <- ggplot(df2, aes(x = digit)) +
+  geom_col(aes(y=prop)) +
+  stat_function(aes(group = 1),
+                fun = ~ log10(1 + 1/.)) +
+  labs(y = "proportion",
+       title = "Observed distribution of digits\n in export data.")
+
+p1 + p2
+```
+
+```{r, echo = FALSE}
+alldf <- left_join(df1, df2, by = "digit") %>%
+  select(digit, 
+         Expected = prop.x, 
+         Observed = prop.y) %>%
+  mutate(across(where(is.numeric),
+                ~round(.,3)))
+x <- as.data.frame(t(alldf[2:3]))
+names(x) <- alldf[[1]]
+x <- cbind(" " = rownames(x),
+           x)
+flextable::flextable(x)
+
+```
 
 Fast forward to 1992. A South-African PhD student, Mark J. Nigrini, finished his dissertation on using Benford's law to detect tax evasion. Although Benford's law was proposed before to detect fraud, it was the work of Nigrini that likely led to the popularisation of the concept. More importantly, it provided some guidelines to decide when deviation from the expected distribution was large enough to raise suspicion.
 
 <div class="jumbotron">
-  <b>Many datasets agree largely with Benford's law, but no real life dataset follows Benford's law perfectly.</b>
+  <b>Benford's law is no real law but an approximation/idealisation of the real world. Many datasets agree largely with Benford's law, but no real life dataset follows Benford's law perfectly.</b> </br></br>
+  To use this for fraud detection, you need a way to determine:
+  <ul>
+  <li>whether a dataset is expected to follow the theoretical distribution, and if so,</li>
+  <li>how much deviation is expected due to randomness</li>
+  </ul>
 </div>
 
 ## What does Benford's law imply about the data?
 
+Actually, it's surprising that we can find so many examples that largely follow Benford's law, because it makes a very strong assumption. It expects that the **logarithm** of all numbers is equally likely to occur **within a given order of magnitude**. 
 
+To illustrate this, we'll use scientific notation. For example, the number $324$ can be written as $3.24 \times 10^2$. We call $3.24$ the mantissa and $2$ the exponent. Benford's law implies that the logarithm of the mantissa is uniformly distributed. This can be illustrated using the export dataset, as shown in the plot below.
+
+```{r}
+mydf <- data.frame(mantisse = z / 10^floor(log10(z)))
+p <- ggplot(mydf, aes(x = mantisse)) +
+  geom_histogram(bins = 10, boundary = 1,
+                 color = "black") 
+(p +
+  scale_x_log10(limits = c(1,10)) +
+  labs(title = "Logarithmic scale")|
+  p + coord_cartesian(xlim = c(1,10)) +
+  labs(title = "Original scale")) +
+  plot_annotation(title = "Illustration of distribution of the mantissa using export data")
+```
+
+This insight should help you decide when a dataset is not going to follow Benford's law. 
+
+First of all, you expect a deviation when a dataset doesn't span an entire order of magnitude. For example, length of humans can't follow Benford's law. The average length of a newborn baby is 50cm, so in the order of magnitude $10^1$ to $10^2$ cm, you exclude already a huge part of possible values. But more importantly, in the order of magnitude $10^2$ to $10^3$cm, the only possible first digits are 1 and 2. Nobody is 3 meter or larger.
+
+Second, you expect a deviation when a previous datapoint influences the value of the next one. For example, if you see 35,000 dollar on a personal saving account, the next value is likely going to be either a bit less or a bit more, but still in the range between 30,000 and 40,000. So also in this case the assumption won't hold.
+
+Lastly, you expect a deviation simply due to randomness if you have a small dataset. We explore this further in the next section.
+
+<div class="jumbotron">
+<b>Unfortunately, there's no strict rule as to what data is expected to follow Benford's law, despite many attempts to formalise this.</b></br></br> 
+As a general rule, a dataset is more likely to follow Benford if:
+<ul>
+ <li>it spans multiple orders of magnitude (the more, the merrier)</li>
+ <li>the data is random (completely unrelated to eachother)</li>
+ <li>the dataset is large (thousands of numbers is better than hundreds)</li>
+</ul>
+</div>
+
+## How much deviation is too much?
+
+As explained before, the amount of expected variation is largely dependent upon the amount of data. With smaller datasets you expect larger amounts of variation. But how much would one expect? One way to look at it, is to calculate between which boundaries the proportions will lie in 95% of the cases. 
+
+According to Lesperance et al(2016), you can calculate these boundaries rather well using the method of Goodman. In the plot below, I compare these calculated confidence intervals with confidence intervals simulated based on a random sample from the export data. Both approaches are in rather good agreement, making Goodman a good alternative to computation-heavy simulations.
+
+```{r}
+alldf <- read.csv("../data/simulci_300.csv")
+p1 <- ggplot(alldf, aes(x = digit)) +
+  geom_crossbar(aes(y = prop,
+                    ymin = ll,
+                    ymax = ul,
+                    fill = obs),
+                position = position_dodge2(width = 0.4, padding = 0)) +
+  labs(fill = "Confidence\ninterval",
+       y = "proportion",
+       title = "Sample of 300 observations")
+
+alldf <- read.csv("../data/simulci_1000.csv")
+p2 <- ggplot(alldf, aes(x = digit)) +
+  geom_crossbar(aes(y = prop,
+                    ymin = ll,
+                    ymax = ul,
+                    fill = obs),
+                position = position_dodge2(width = 0.4, padding = 0)) +
+  labs(fill = "Confidence\ninterval",
+       y = "proportion",
+       title = "Sample of 1,000 observations")
+
+p1 + p2 +
+  plot_layout(guides = "collect") +
+  plot_annotation("Comparison of 95% confidence intervals")
+```
 
 ## References
 
@@ -41,6 +170,7 @@ Fast forward to 1992. A South-African PhD student, Mark J. Nigrini, finished his
  - [Hill, 1998](https://www.jstor.org/stable/27857060): The first digit phenomenon. (Can be downloaded from [this link](https://hill.math.gatech.edu/publications/PAPER%20PDFS/TheFirstDigitPhenomenonAmericanScientist1996.pdf) per 30 dec, 2021)
  - [Negrini, 2000](https://www.sciencedirect.com/science/article/pii/S0748575100000087): Computer assisted analytical procedures using Benford's Law
  - [Berger & Hill, 2011](https://projecteuclid.org/journals/probability-surveys/volume-8/issue-none/A-basic-theory-of-Benfords-Law/10.1214/11-PS175.full): A basic theory of Benford's law.
+ - [Lesperance et al, 2016](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0151235#pone.0151235.ref021): Assessing conformance with Benford's law: goodness-of-fit tests and simultaneous confidence intervals.
  
 ### Application of Benford on COVID data
 

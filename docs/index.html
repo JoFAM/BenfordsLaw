@@ -30,9 +30,9 @@
        code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
        pre:not([class]) { background-color: white }</style>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
-<script src="site_libs/navigation-1.1/codefolding.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/tabwid-1.0.0/tabwid.css" rel="stylesheet" />
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -147,9 +147,6 @@ pre code {
 </style>
 
 <!-- code folding -->
-<style type="text/css">
-.code-folding-btn { margin-bottom: 4px; }
-</style>
 
 
 
@@ -166,14 +163,6 @@ pre code {
 
 <div id="header">
 
-<div class="btn-group pull-right float-right">
-<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
-<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
-<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
-<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
-</ul>
-</div>
-
 
 
 <h1 class="title toc-ignore">Applying Benford’s law to COVID data the right way</h1>
@@ -188,14 +177,103 @@ pre code {
 <p><span class="math display">\[
 P(D) = \text{log}_{10}\left( \frac{D + 1}{D}\right)
 \]</span></p>
-<p>His discovery was forgotten about until Frank Benford noticed the same in 1938, and checked this theoretical distribution against a wide variety of datasets. Many of those datasets seemed to follow this law rather well, although some deviated significantly.</p>
+<p>In 1938, Frank Benford noticed the same thing and checked this theoretical distribution against a wide variety of datasets. Many of those datasets seemed to follow this law rather well, although some deviated significantly.</p>
+<p>As an example, I’ve downloaded the export data of all countries for the period 1960 to 2020 from the Worldbank website. This dataset contains in total 7015 numbers. In the graphs below I show the expected distribution of the first digit according to Benford’s law (left), and the observed distribution in this dataset (right). Both graphs look almost identical.</p>
+<p><img src="index_files/figure-html/unnamed-chunk-2-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<template id="93374a4d-14ab-4a49-8528-0e9352616dc4"><style>
+.tabwid table{
+  border-spacing:0px !important;
+  border-collapse:collapse;
+  line-height:1;
+  margin-left:auto;
+  margin-right:auto;
+  border-width: 0;
+  display: table;
+  margin-top: 1.275em;
+  margin-bottom: 1.275em;
+  border-color: transparent;
+}
+.tabwid_left table{
+  margin-left:0;
+}
+.tabwid_right table{
+  margin-right:0;
+}
+.tabwid td {
+    padding: 0;
+}
+.tabwid a {
+  text-decoration: none;
+}
+.tabwid thead {
+    background-color: transparent;
+}
+.tabwid tfoot {
+    background-color: transparent;
+}
+.tabwid table tr {
+background-color: transparent;
+}
+</style><div class="tabwid"><style>.cl-a9ef0dce{}.cl-a9e197fc{font-family:'Arial';font-size:11pt;font-weight:normal;font-style:normal;text-decoration:none;color:rgba(0, 0, 0, 1.00);background-color:transparent;}.cl-a9e1bf0c{margin:0;text-align:left;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-a9e1bf0d{margin:0;text-align:right;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);padding-bottom:5pt;padding-top:5pt;padding-left:5pt;padding-right:5pt;line-height: 1;background-color:transparent;}.cl-a9e22104{width:54pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-a9e22105{width:54pt;background-color:transparent;vertical-align: middle;border-bottom: 0 solid rgba(0, 0, 0, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-a9e22106{width:54pt;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-a9e22107{width:54pt;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(102, 102, 102, 1.00);border-top: 0 solid rgba(0, 0, 0, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-a9e22108{width:54pt;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(102, 102, 102, 1.00);border-top: 2pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}.cl-a9e22109{width:54pt;background-color:transparent;vertical-align: middle;border-bottom: 2pt solid rgba(102, 102, 102, 1.00);border-top: 2pt solid rgba(102, 102, 102, 1.00);border-left: 0 solid rgba(0, 0, 0, 1.00);border-right: 0 solid rgba(0, 0, 0, 1.00);margin-bottom:0;margin-top:0;margin-left:0;margin-right:0;}</style><table class='cl-a9ef0dce'>
+<thead><tr style="overflow-wrap:break-word;"><td class="cl-a9e22108"><p class="cl-a9e1bf0c"><span class="cl-a9e197fc"> </span></p></td><td class="cl-a9e22109"><p class="cl-a9e1bf0d"><span class="cl-a9e197fc">1</span></p></td><td class="cl-a9e22109"><p class="cl-a9e1bf0d"><span class="cl-a9e197fc">2</span></p></td><td class="cl-a9e22109"><p class="cl-a9e1bf0d"><span class="cl-a9e197fc">3</span></p></td><td class="cl-a9e22109"><p class="cl-a9e1bf0d"><span class="cl-a9e197fc">4</span></p></td><td class="cl-a9e22109"><p class="cl-a9e1bf0d"><span class="cl-a9e197fc">5</span></p></td><td class="cl-a9e22109"><p class="cl-a9e1bf0d"><span class="cl-a9e197fc">6</span></p></td><td class="cl-a9e22109"><p class="cl-a9e1bf0d"><span class="cl-a9e197fc">7</span></p></td><td class="cl-a9e22109"><p class="cl-a9e1bf0d"><span class="cl-a9e197fc">8</span></p></td><td class="cl-a9e22109"><p class="cl-a9e1bf0d"><span class="cl-a9e197fc">9</span></p></td></tr></thead><tbody><tr style="overflow-wrap:break-word;"><td class="cl-a9e22104"><p class="cl-a9e1bf0c"><span class="cl-a9e197fc">Expected</span></p></td><td class="cl-a9e22105"><p class="cl-a9e1bf0d"><span class="cl-a9e197fc">0.301</span></p></td><td class="cl-a9e22105"><p class="cl-a9e1bf0d"><span class="cl-a9e197fc">0.176</span></p></td><td class="cl-a9e22105"><p class="cl-a9e1bf0d"><span class="cl-a9e197fc">0.125</span></p></td><td class="cl-a9e22105"><p class="cl-a9e1bf0d"><span class="cl-a9e197fc">0.097</span></p></td><td class="cl-a9e22105"><p class="cl-a9e1bf0d"><span class="cl-a9e197fc">0.079</span></p></td><td class="cl-a9e22105"><p class="cl-a9e1bf0d"><span class="cl-a9e197fc">0.067</span></p></td><td class="cl-a9e22105"><p class="cl-a9e1bf0d"><span class="cl-a9e197fc">0.058</span></p></td><td class="cl-a9e22105"><p class="cl-a9e1bf0d"><span class="cl-a9e197fc">0.051</span></p></td><td class="cl-a9e22105"><p class="cl-a9e1bf0d"><span class="cl-a9e197fc">0.046</span></p></td></tr><tr style="overflow-wrap:break-word;"><td class="cl-a9e22106"><p class="cl-a9e1bf0c"><span class="cl-a9e197fc">Observed</span></p></td><td class="cl-a9e22107"><p class="cl-a9e1bf0d"><span class="cl-a9e197fc">0.309</span></p></td><td class="cl-a9e22107"><p class="cl-a9e1bf0d"><span class="cl-a9e197fc">0.168</span></p></td><td class="cl-a9e22107"><p class="cl-a9e1bf0d"><span class="cl-a9e197fc">0.126</span></p></td><td class="cl-a9e22107"><p class="cl-a9e1bf0d"><span class="cl-a9e197fc">0.103</span></p></td><td class="cl-a9e22107"><p class="cl-a9e1bf0d"><span class="cl-a9e197fc">0.078</span></p></td><td class="cl-a9e22107"><p class="cl-a9e1bf0d"><span class="cl-a9e197fc">0.064</span></p></td><td class="cl-a9e22107"><p class="cl-a9e1bf0d"><span class="cl-a9e197fc">0.058</span></p></td><td class="cl-a9e22107"><p class="cl-a9e1bf0d"><span class="cl-a9e197fc">0.050</span></p></td><td class="cl-a9e22107"><p class="cl-a9e1bf0d"><span class="cl-a9e197fc">0.044</span></p></td></tr></tbody></table></div></template>
+<div class="flextable-shadow-host" id="b064ccc7-8f6d-4307-8345-c32095c7d7ce"></div>
+<script>
+var dest = document.getElementById("b064ccc7-8f6d-4307-8345-c32095c7d7ce");
+var template = document.getElementById("93374a4d-14ab-4a49-8528-0e9352616dc4");
+var caption = template.content.querySelector("caption");
+if(caption) {
+  caption.style.cssText = "display:block;text-align:center;";
+  var newcapt = document.createElement("p");
+  newcapt.appendChild(caption)
+  dest.parentNode.insertBefore(newcapt, dest.previousSibling);
+}
+var fantome = dest.attachShadow({mode: 'open'});
+var templateContent = template.content;
+fantome.appendChild(templateContent);
+</script>
+
 <p>Fast forward to 1992. A South-African PhD student, Mark J. Nigrini, finished his dissertation on using Benford’s law to detect tax evasion. Although Benford’s law was proposed before to detect fraud, it was the work of Nigrini that likely led to the popularisation of the concept. More importantly, it provided some guidelines to decide when deviation from the expected distribution was large enough to raise suspicion.</p>
 <div class="jumbotron">
-<p><b>Many datasets agree largely with Benford’s law, but no real life dataset follows Benford’s law perfectly.</b></p>
+<b>Benford’s law is no real law but an approximation/idealisation of the real world. Many datasets agree largely with Benford’s law, but no real life dataset follows Benford’s law perfectly.</b> </br></br> To use this for fraud detection, you need a way to determine:
+<ul>
+<li>
+whether a dataset is expected to follow the theoretical distribution, and if so,
+</li>
+<li>
+how much deviation is expected due to randomness
+</li>
+</ul>
 </div>
 </div>
 <div id="what-does-benfords-law-imply-about-the-data" class="section level2">
 <h2>What does Benford’s law imply about the data?</h2>
+<p>Actually, it’s surprising that we can find so many examples that largely follow Benford’s law, because it makes a very strong assumption. It expects that the <strong>logarithm</strong> of all numbers is equally likely to occur <strong>within a given order of magnitude</strong>.</p>
+<p>To illustrate this, we’ll use scientific notation. For example, the number <span class="math inline">\(324\)</span> can be written as <span class="math inline">\(3.24 \times 10^2\)</span>. We call <span class="math inline">\(3.24\)</span> the mantissa and <span class="math inline">\(2\)</span> the exponent. Benford’s law implies that the logarithm of the mantissa is uniformly distributed. This can be illustrated using the export dataset, as shown in the plot below.</p>
+<p><img src="index_files/figure-html/unnamed-chunk-4-1.png" width="100%" style="display: block; margin: auto;" /></p>
+<p>This insight should help you decide when a dataset is not going to follow Benford’s law.</p>
+<p>First of all, you expect a deviation when a dataset doesn’t span an entire order of magnitude. For example, length of humans can’t follow Benford’s law. The average length of a newborn baby is 50cm, so in the order of magnitude <span class="math inline">\(10^1\)</span> to <span class="math inline">\(10^2\)</span> cm, you exclude already a huge part of possible values. But more importantly, in the order of magnitude <span class="math inline">\(10^2\)</span> to <span class="math inline">\(10^3\)</span>cm, the only possible first digits are 1 and 2. Nobody is 3 meter or larger.</p>
+<p>Second, you expect a deviation when a previous datapoint influences the value of the next one. For example, if you see 35,000 dollar on a personal saving account, the next value is likely going to be either a bit less or a bit more, but still in the range between 30,000 and 40,000. So also in this case the assumption won’t hold.</p>
+<p>Lastly, you expect a deviation simply due to randomness if you have a small dataset. We explore this further in the next section.</p>
+<div class="jumbotron">
+<b>Unfortunately, there’s no strict rule as to what data is expected to follow Benford’s law, despite many attempts to formalise this.</b></br></br> As a general rule, a dataset is more likely to follow Benford if:
+<ul>
+<li>
+it spans multiple orders of magnitude (the more, the merrier)
+</li>
+<li>
+the data is random (completely unrelated to eachother)
+</li>
+<li>
+the dataset is large (thousands of numbers is better than hundreds)
+</li>
+</ul>
+</div>
+</div>
+<div id="how-much-deviation-is-too-much" class="section level2">
+<h2>How much deviation is too much?</h2>
+<p>As explained before, the amount of expected variation is largely dependent upon the amount of data. With smaller datasets you expect larger amounts of variation. But how much would one expect? One way to look at it, is to calculate between which boundaries the proportions will lie in 95% of the cases.</p>
+<p>According to Lesperance et al(2016), you can calculate these boundaries rather well using the method of Goodman. In the plot below, I compare these calculated confidence intervals with confidence intervals simulated based on a random sample from the export data. Both approaches are in rather good agreement, making Goodman a good alternative to computation-heavy simulations.</p>
+<p><img src="index_files/figure-html/unnamed-chunk-5-1.png" width="100%" style="display: block; margin: auto;" /></p>
 </div>
 <div id="references" class="section level2">
 <h2>References</h2>
@@ -205,6 +283,7 @@ P(D) = \text{log}_{10}\left( \frac{D + 1}{D}\right)
 <li><a href="https://www.jstor.org/stable/27857060">Hill, 1998</a>: The first digit phenomenon. (Can be downloaded from <a href="https://hill.math.gatech.edu/publications/PAPER%20PDFS/TheFirstDigitPhenomenonAmericanScientist1996.pdf">this link</a> per 30 dec, 2021)</li>
 <li><a href="https://www.sciencedirect.com/science/article/pii/S0748575100000087">Negrini, 2000</a>: Computer assisted analytical procedures using Benford’s Law</li>
 <li><a href="https://projecteuclid.org/journals/probability-surveys/volume-8/issue-none/A-basic-theory-of-Benfords-Law/10.1214/11-PS175.full">Berger &amp; Hill, 2011</a>: A basic theory of Benford’s law.</li>
+<li><a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0151235#pone.0151235.ref021">Lesperance et al, 2016</a>: Assessing conformance with Benford’s law: goodness-of-fit tests and simultaneous confidence intervals.</li>
 </ul>
 </div>
 <div id="application-of-benford-on-covid-data" class="section level3">
@@ -217,6 +296,12 @@ P(D) = \text{log}_{10}\left( \frac{D + 1}{D}\right)
 <h3>Software</h3>
 <ul>
 <li>Github repo for the Benford Analysis package <a href="https://github.com/carloscinelli/benford.analysis">benford.analysis</a>. This package is on CRAN.</li>
+</ul>
+</div>
+<div id="data" class="section level3">
+<h3>Data</h3>
+<ul>
+<li><a href="https://data.worldbank.org/indicator/NE.EXP.GNFS.KN?end=2020&amp;start=1960">Export data from worldbank.org</a>: Indicator NE.EXP.GNFS.KN from 1960 to 2020.</li>
 </ul>
 </div>
 </div>
@@ -254,11 +339,6 @@ $(document).ready(function () {
 </script>
 
 <!-- code folding -->
-<script>
-$(document).ready(function () {
-  window.initializeCodeFolding("hide" === "show");
-});
-</script>
 
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

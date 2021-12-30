@@ -58,7 +58,7 @@ create_sample <- function(n, min = 1, max = 20000){
 goodman <- function(nx, a = 0.05){
   n <- sum(nx)
   k <- length(nx)
-  B <- qchisq((1-a)/k, 1) # Xa,1 bcs a is right tail!
+  B <- qchisq((1-a/k), 1) # Xa,1 bcs a is right tail!
   fx <- as.vector(nx)
   
   dev <- sqrt(B*(B + 4*fx*(n-fx)/n))
@@ -92,5 +92,5 @@ plotbenford <- function(x, add.expected = TRUE){
                       ymin = ll,
                       ymax = ul,
                       fill = obs),
-                  position = position_dodge2(width = 0.5, padding = 0.4)) 
+                  position = position_dodge2(width = 0.4, padding = 0)) 
 }
