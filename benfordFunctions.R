@@ -54,8 +54,8 @@ create_sample <- function(n, min = 1, max = 20000){
 #--------------------------------------------------
 # Goodman simultaneous intervals 
 #--------------------------------------------------
-goodman <- function(x, a = 0.05){
-  nx <- table(x)
+# Need a table as input
+goodman <- function(nx, a = 0.05){
   n <- sum(nx)
   k <- length(nx)
   B <- qchisq((1-a)/k, 1) # Xa,1 bcs a is right tail!
@@ -66,9 +66,31 @@ goodman <- function(x, a = 0.05){
   ll <- (B + 2*fx - dev)/(2*(n + B))
   
   data.frame(
-    digit = names(nx),
+    digit = as.character(1:9),
     prop = as.vector(prop.table(nx)),
     ll = ll,
     ul = ul
   )
+}
+
+#--------------------------------------------------
+# Plot for distributions 
+#--------------------------------------------------
+library(ggplot2)
+library(DescTools)
+
+plotbenford <- function(x, add.expected = TRUE){
+  df <- goodman(table(fdigit(x)))
+  expect <- goodman(dBenf(1:9)*length(x))
+  
+  df <- rbind(df,expect)
+  df$obs <- rep(c("observed","expected"),
+                each = 9)
+  
+  ggplot(df, aes(x = digit)) +
+    geom_crossbar(aes(y = prop,
+                      ymin = ll,
+                      ymax = ul,
+                      fill = obs),
+                  position = position_dodge2(width = 0.5, padding = 0.4)) 
 }
