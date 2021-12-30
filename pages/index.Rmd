@@ -1,0 +1,57 @@
+---
+title: "Applying Benford's law to COVID data the right way"
+output: 
+  html_document:
+    code_folding: hide
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(ggplot2)
+library(dplyr)
+library(patchwork)
+```
+
+--------------------
+
+## What is Benford's law really?
+
+The astronomer Simon Newcomb noticed in 1881 that the first pages of a book with logarithmic values were worn out more than later pages. He saw this as an indication that any random number had a higher chance of starting with a 1 than with a higher digit. His calculations led to the conclusion that for any digit $D$, the probability $P(D)$ that any random number would start with that digit is given by:
+
+$$
+P(D) = \text{log}_{10}\left( \frac{D + 1}{D}\right)
+$$
+
+His discovery was forgotten about until Frank Benford noticed the same in 1938, and checked this theoretical distribution against a wide variety of datasets. Many of those datasets seemed to follow this law rather well, although some deviated significantly. The plot below shows 
+
+Fast forward to 1992. A South-African PhD student, Mark J. Nigrini, finished his dissertation on using Benford's law to detect tax evasion. Although Benford's law was proposed before to detect fraud, it was the work of Nigrini that likely led to the popularisation of the concept. More importantly, it provided some guidelines to decide when deviation from the expected distribution was large enough to raise suspicion.
+
+<div class="jumbotron">
+  <b>Many datasets agree largely with Benford's law, but no real life dataset follows Benford's law perfectly.</b>
+</div>
+
+## What does Benford's law imply about the data?
+
+
+
+## References
+
+### Background articles
+
+ - [Hill, 1998](https://www.jstor.org/stable/27857060): The first digit phenomenon. (Can be downloaded from [this link](https://hill.math.gatech.edu/publications/PAPER%20PDFS/TheFirstDigitPhenomenonAmericanScientist1996.pdf) per 30 dec, 2021)
+ - [Negrini, 2000](https://www.sciencedirect.com/science/article/pii/S0748575100000087): Computer assisted analytical procedures using Benford's Law
+ - [Berger & Hill, 2011](https://projecteuclid.org/journals/probability-surveys/volume-8/issue-none/A-basic-theory-of-Benfords-Law/10.1214/11-PS175.full): A basic theory of Benford's law.
+ 
+### Application of Benford on COVID data
+
+ - [Kennedy & Yam, 2020](https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0243123): On the authenticity of COVID-19 case figures.
+ 
+ 
+ 
+### Software 
+
+ - Github repo for the Benford Analysis package [benford.analysis](https://github.com/carloscinelli/benford.analysis). This package is on CRAN.
+ 
+### Data
+
+ - [Export data from worldbank.org](https://data.worldbank.org/indicator/NE.EXP.GNFS.KN?end=2020&start=1960): Indicator NE.EXP.GNFS.KN from 1960 to 2020. 

@@ -1,0 +1,6 @@
+name: "covid-benford"
+output_dir: "../docs"
+output:
+  html_document:
+    theme: cosmo
+    css: myown.css
