@@ -131,6 +131,8 @@ As a general rule, a dataset is more likely to follow Benford if:
 
 ## How much deviation is too much?
 
+### Expected range of values
+
 As explained before, the amount of expected variation is largely dependent upon the amount of data. With smaller datasets you expect larger amounts of variation. But how much would one expect? One way to look at it, is to calculate between which boundaries the proportions will lie in 95% of the cases. 
 
 According to Lesperance et al(2016), you can calculate these boundaries rather well using the method of Goodman. In the plot below, I compare these calculated confidence intervals with confidence intervals simulated based on a random sample from the export data. Both approaches are in rather good agreement, making Goodman a good alternative to computation-heavy simulations.
@@ -167,6 +169,50 @@ p1 + p2 +
   plot_annotation("Comparison of 95% confidence intervals")
 ```
 
+### Negrini's MAD rule of thumb
+
+In his work, Negrini recommends the use of the Mean Absolute Deviation (MAD) to judge whether something suspicious is going on in the data. You calculate the absolute difference between the expected and the observed proportion, and then take the average of that. To decide whether a dataset shows conformity with Benford's law, Nigrini suggested a treshold value of $0.012$; anything larger than that needs further investigation.
+
+You can also look at this from a probabilistic angle. You can simulate all possible values for the MAD of a dataset with a given size. Then you check which value is larger than 95% of the simulated values. This is the 95% quantile. A sample from data that follows Benford's law will give a MAD larger than this quantile in only 5% of the cases. 
+
+Doing this, you find a neat relation between the MAD and the sample size:
+
+$$
+MAD \sqrt{n} \approx 0.35 ~~~\text{with}~~~ MAD = \displaystyle \frac{1}{9} \sum_{i=1}^{9} \left|p_i - \frac{f_i}{n}\right|
+$$
+
+Here $p_i$ is the expected proportion for the $i$th digit, $f_i$ the observed frequency for that digit and $n$ the size of the dataset. Below you see a simulation table for different values of $n$. Values are rounded to 2 significant digits.
+
+```{r}
+resdf <- read.csv("../data/MADlimits.csv")
+names(resdf) <- gsub("V","n = ",names(resdf))
+resdf <- cbind(" " = c("Average","95% quantile","Rescaled Avg", "Rescaled quantile"),
+               resdf)
+flextable(resdf)
+```
+
+### Formal statistical testing
+
+Whereas I determined the MAD treshold by simulation, often a more formal statistical approach is used. The most popular option is to use a Chi-squared test. Simply put, for every digit $i$ the squared difference is calculated between the observed frequencies $Fo_i$ and expected frequencies $Fe_i$. These numbers are divided by the expected frequency for that digit and the results are then summed. This gives the $\chi^2$ (read: chi squared) statistic:
+
+$$
+\chi^2 = \displaystyle \sum_{i=1}^9 \frac{\left( Fo_i - Fe_i \right)^2}{Fe_i}
+$$
+
+The value of this $\chi^2$ obviously grows larger when the data deviates further from the Benford optimum. Just like with the MAD, it's possible to calculate a treshold value that's only exceeded in 5% of the cases where the data does follow Benford's law. Because this is a formal statistical test, you can also calculate a so-called *p-value*. This value indicates in which fraction of the cases you'd expect a larger value for $\chi^2$ even though the sample comes from a dataset that follows Benford's law.
+
+Just like the MAD, also this procedure is based on the differences between the observed and expected proportions. But now these differences are squared. As a consequence, the digit with the largest deviation will have a larger impact on the result of this test compared to the procedure based on the MAD.
+
+<div class="jumbotron">
+<b>You can't prove with certainty whether or not a specific dataset follows Benford's law. You can only get an indication of how likely certain values are assuming your data does follow Benford's law.</b></br></br> 
+There's multiple approaches to do this:
+<ul>
+ <li>using boundaries within which the proportions of all digits lie in 95% of the cases.</li>
+ <li>calculating the median absolute deviation and comparing to a treshold value.</li>
+ <li>using formal statistics to get an idea of how extreme your data is if you assume it does follow Benford's law. </li>
+</ul>
+</div>
+
 ## References
 
 ### Background articles
@@ -185,6 +231,7 @@ p1 + p2 +
 ### Software 
 
  - Github repo for the Benford Analysis package [benford.analysis](https://github.com/carloscinelli/benford.analysis). This package is on CRAN.
+ - Webpage for the [DescTools](https://andrisignorell.github.io/DescTools/) package that contains a set of functions to calculate probabilities and simulate datasets according to Benford's distribution. This package is on CRAN.
  
 ### Data
 
