@@ -1,6 +1,18 @@
 name: "covid-benford"
 output_dir: "../docs"
-output:
+navbar: 
+  title: COVID data and Benford's law
+  left:
+     - text: "Benford's law"
+       icon: fa-book
+       href: index.html
+     - text: "COVID data"
+       icon: fa-thermometer-full
+       href: covid.html
+     - text: "Performance of tests"
+       icon: fa-bolt
+       href: performance.html
+  output:
   html_document:
     theme: cosmo
     css: myown.css

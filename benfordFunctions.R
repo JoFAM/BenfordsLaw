@@ -11,12 +11,7 @@ fdigit <- function(x, na.rm = TRUE){
   } else if(any(is.na(x))){
     warning("Missing values will mess up your proportion table!")
   }
-  
-  # First put in scientific notation
-  fx <- format(as.numeric(x), # integers don't format correctly
-               scientific = TRUE)
-  
-  substr(fx,1,1)
+  trunc(x/ 10^floor(log10(x)))
 }
 
 #--------------------------------------------------
@@ -28,18 +23,23 @@ fdigit <- function(x, na.rm = TRUE){
 # the given minimum and maximum. Then it will generate 
 # randomly new numbers for every number that falls outside
 # the limits until the sample satisfies conditions.
-create_sample <- function(n, min = 1, max = 20000){
+create_sample <- function(n, min = 1, max = 20000,
+                          prob = NULL){
   if(any(c(min,max) < 0))
     stop("This only works for positive numbers")
   else if(min == 0) 
     min <- min + 10^(-15)
   
+  
   # min & max
   lmin <- floor(log10(min))
   lmax <- ceiling(log10(max))
   es <- seq(lmin,lmax,by=1)
+  
+  # make sample  
   s <- runif(n)
-  e <- sample(es,n,replace = TRUE)
+  e <- sample(es,n,replace = TRUE,
+              prob = prob)
   
   samp <- 10^s * 10^e
   while(any(id <- samp < min | samp > max)){
@@ -80,7 +80,7 @@ library(ggplot2)
 library(DescTools)
 
 plotbenford <- function(x, add.expected = TRUE){
-  df <- goodman(table(fdigit(x)))
+  df <- goodman(tabulate(fdigit(x)))
   expect <- goodman(dBenf(1:9)*length(x))
   
   df <- rbind(df,expect)
@@ -93,4 +93,12 @@ plotbenford <- function(x, add.expected = TRUE){
                       ymax = ul,
                       fill = obs),
                   position = position_dodge2(width = 0.4, padding = 0)) 
+}
+
+#--------------------------------------------------
+# Calculate corrected MAD 
+#--------------------------------------------------
+# Takes a sample x and 
+madbenford <- function(o,p, n = 1){
+  mean(abs(p - o))*sqrt(n)
 }

@@ -1,5 +1,5 @@
 ---
-title: "Applying Benford's law to COVID data the right way"
+title: "Using Benford's law for fraud detection"
 ---
 
 ```{r setup, include=FALSE}
@@ -94,9 +94,9 @@ Fast forward to 1992. A South-African PhD student, Mark J. Nigrini, finished his
 
 ## What does Benford's law imply about the data?
 
-Actually, it's surprising that we can find so many examples that largely follow Benford's law, because it makes a very strong assumption. It expects that the **logarithm** of all numbers is equally likely to occur **within a given order of magnitude**. 
+It's surprising we can find so many examples that largely follow Benford's law, because this law makes a very strong assumption. It expects that the logarithm of all numbers is equally likely to occur *within a given order of magnitude*. 
 
-To illustrate this, we'll use scientific notation. For example, the number $324$ can be written as $3.24 \times 10^2$. We call $3.24$ the mantissa and $2$ the exponent. Benford's law implies that the logarithm of the mantissa is uniformly distributed. This can be illustrated using the export dataset, as shown in the plot below.
+To clarify what this means, we'll use scientific notation. For example, the number $324$ can be written as $3.24 \times 10^2$. We call $3.24$ the mantissa and $2$ the exponent. Benford's law implies that the logarithm of the mantissa is uniformly distributed. This can be illustrated using the export dataset, as shown in the plot below.
 
 ```{r}
 mydf <- data.frame(mantisse = z / 10^floor(log10(z)))
@@ -111,7 +111,7 @@ p <- ggplot(mydf, aes(x = mantisse)) +
   plot_annotation(title = "Illustration of distribution of the mantissa using export data")
 ```
 
-This insight should help you decide when a dataset is not going to follow Benford's law. 
+Any dataset that somehow violates this assumption, won't follow Benford's law. Some reasons for deviation are so obvious, that they lead to a set of general guidelines about which data might or might not fulfill the requirements. 
 
 First of all, you expect a deviation when a dataset doesn't span an entire order of magnitude. For example, length of humans can't follow Benford's law. The average length of a newborn baby is 50cm, so in the order of magnitude $10^1$ to $10^2$ cm, you exclude already a huge part of possible values. But more importantly, in the order of magnitude $10^2$ to $10^3$cm, the only possible first digits are 1 and 2. Nobody is 3 meter or larger.
 

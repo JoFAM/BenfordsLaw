@@ -1,0 +1,5 @@
+---
+title: "How well does Benford's law work for COVID data?"
+---
+
+Newsflash: it doesn't really. More to come.
